@@ -26,4 +26,8 @@
 
 - 세 가지 OCR 엔진(pyMuPDF, Tesseract, OCR-Space)의 한글 텍스트 인식 성능을 비교합니다.
 
+### [ocr_service_plan_1104](AI-ML-homework/ocr_service_plan_1104)
+
+- OCR 서비스 기획서가 있으며, 데모 버젼이므로 계속 수정 중입니다.
+
 ---
