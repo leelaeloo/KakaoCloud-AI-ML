@@ -40,28 +40,43 @@
 
 #### 레이아웃
 
-<div align="center">
+<div align="center" style="border:2px solid #555; border-radius:12px; padding:24px; background-color:#1e1e1e; color:#ddd; width:80%;">
 
 <h3>🖼️ [로고]　🔔 [알림]　⚙️ [설정]　👤 [계정]</h3>
 
----
+<hr style="border:1px solid #333;">
 
-### 📊 오늘 처리한 문서: **24건**
+<h4>📊 오늘 처리한 문서: <b>24건</b></h4>
 
-| 📄 새 업로드 | 📂 저장된 문서 |
-| :----------: | :------------: |
+<table>
+  <tr>
+    <td align="center">📄 <b>새 업로드</b></td>
+    <td align="center">📂 <b>저장된 문서</b></td>
+  </tr>
+</table>
 
----
+<hr style="border:1px solid #333;">
 
-### 🕓 최근 처리 내역
+<h4>🕓 최근 처리 내역</h4>
 
-| 문서명           |    처리일     |
-| :--------------- | :-----------: |
-| 영수증\_2024.hwp | 🗓️ 2024-11-04 |
-| 계약서\_ABC.pdf  | 🗓️ 2024-11-04 |
-| 세금계산서.jpg   | 🗓️ 2024-11-03 |
-
----
+<table>
+  <tr>
+    <th>문서명</th>
+    <th>처리일</th>
+  </tr>
+  <tr>
+    <td>영수증_2024.hwp</td>
+    <td>🗓️ 2024-11-04</td>
+  </tr>
+  <tr>
+    <td>계약서_ABC.pdf</td>
+    <td>🗓️ 2024-11-04</td>
+  </tr>
+  <tr>
+    <td>세금계산서.jpg</td>
+    <td>🗓️ 2024-11-03</td>
+  </tr>
+</table>
 
 </div>
 
