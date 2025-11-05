@@ -73,7 +73,7 @@
 
 #### 레이아웃
 
-<img src="./screenshots/processing" width="1000">
+<img src="./screenshots/processing.png" width="1000">
 ```
 
 #### 주요 기능
