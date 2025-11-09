@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # Backend (FastAPI)
+  backend:
+    build: ./backend
+    container_name: ocr-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./data/uploads:/app/uploads
+      - ./data/results:/app/results
+    environment:
+      - DEBUG=true
+      - UPLOAD_DIR=/app/uploads
+      - RESULTS_DIR=/app/results
+    restart: unless-stopped
+    networks:
+      - ocr-network
+
+  # Frontend (Next.js)
+  frontend:
+    build: ./frontend
+    container_name: ocr-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - ocr-network
+
+volumes:
+  uploads:
+  results:
+
+networks:
+  ocr-network:
+    driver: bridge

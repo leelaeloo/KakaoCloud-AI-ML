@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 전역 설정 */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  background: #ffffff;
+}
+
+/* 메인 카드 스타일 */
+.card {
+  @apply bg-yellow-50 rounded-3xl shadow-lg p-8;
+}
+
+/* OCR 텍스트 - 줄바꿈 최적화 */
+.ocr-text {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
