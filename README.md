@@ -31,3 +31,11 @@
 - OCR 서비스 기획서가 있으며, 데모 버젼이므로 계속 수정 중입니다.
 
 ---
+
+### [senior-ocr-pwa](AI-ML-homework/senior-ocr-pwa)
+
+- 어르신들을 위한 문서 읽어주기 앱입니다.
+
+### 자세하게 보기 ➡️ [senior-ocr-pwa](AI-ML-homework/senior-ocr-pwa/README.md)
+
+---
