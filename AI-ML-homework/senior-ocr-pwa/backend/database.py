@@ -1,8 +1,3 @@
-"""
-데이터베이스 설정 및 연결 관리
-SQLite를 사용한 비동기 DB 연결
-"""
-
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import declarative_base
 import os
@@ -13,7 +8,7 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./ocr_history.db")
 # 비동기 엔진 생성
 engine = create_async_engine(
     DATABASE_URL,
-    echo=True,  # SQL 쿼리 로깅 (개발 시 유용)
+    echo=True,  # SQL 쿼리 로깅
 )
 
 # 비동기 세션 팩토리

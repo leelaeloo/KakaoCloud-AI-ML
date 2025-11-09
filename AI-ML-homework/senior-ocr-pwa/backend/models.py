@@ -1,8 +1,3 @@
-"""
-데이터베이스 모델 정의
-OCR 처리 기록을 저장하는 테이블
-"""
-
 from sqlalchemy import Column, Integer, String, Float, DateTime, Text
 from datetime import datetime
 from database import Base
