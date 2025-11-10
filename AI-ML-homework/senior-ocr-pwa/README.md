@@ -74,7 +74,7 @@ senior-ocr-pwa/
 ### Docker Compose 사용
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 접속: http://localhost:3000
@@ -181,9 +181,9 @@ brew install tesseract tesseract-lang
 ### Docker 빌드 실패
 
 ```bash
-docker-compose down
-docker-compose build --no-cache
-docker-compose up
+docker compose down
+docker compose build --no-cache
+docker compose up
 ```
 
 ---
