@@ -76,8 +76,33 @@ export default function Home() {
   };
 
   const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    alert("복사되었습니다!");
+    // HTTPS 환경에서는 navigator.clipboard 사용
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text)
+        .then(() => alert("복사되었습니다!"))
+        .catch(() => fallbackCopy(text));
+    } else {
+      // HTTP 환경에서는 fallback 방식 사용
+      fallbackCopy(text);
+    }
+  };
+
+  const fallbackCopy = (text: string) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-999999px";
+    textArea.style.top = "-999999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      alert("복사되었습니다!");
+    } catch (err) {
+      alert("복사에 실패했습니다. 직접 선택해서 복사해주세요.");
+    }
+    document.body.removeChild(textArea);
   };
 
   // 결과 화면 (OCR 완료 후)
