@@ -7,9 +7,11 @@
 ## Privew
 
 - PC 화면
+
   <img src="./screenshots/main-pc.png" width="500">
 
 - APP 화면
+
   <img src="./screenshots/main-app.png" width="500">
 
 ## 프로젝트 소개
