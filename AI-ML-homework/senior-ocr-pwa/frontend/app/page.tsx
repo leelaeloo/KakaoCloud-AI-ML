@@ -110,19 +110,16 @@ export default function Home() {
   if (result) {
     return (
       <div className="min-h-screen bg-white">
-        {/* 통합 헤더 (모바일/데스크톱 공통) */}
-        <header className="bg-yellow-100 shadow-md sticky top-0 z-50">
+        {/* 통합 헤더 (모바일/데스크톱) */}
+        <header className="bg-yellow-100 shadow-md sticky top-0 z-50 border-b-2 border-yellow-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-4">
             <div className="flex items-center justify-between">
-              <button
-                onClick={() => router.push("/")}
-                className="flex items-center gap-3 hover:opacity-80 transition-opacity"
-              >
-                <span className="text-3xl md:text-4xl leading-none">📖</span>
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-none">
+              <div className="flex items-center gap-3">
+                <span className="text-3xl md:text-4xl">📖</span>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
                   읽어드림
                 </h1>
-              </button>
+              </div>
               <button
                 onClick={() => router.push("/history")}
                 className="bg-white hover:bg-gray-50 text-gray-900 font-bold px-4 py-2 md:px-6 md:py-3 rounded-xl transition-all flex items-center gap-2 shadow-md"
@@ -136,9 +133,9 @@ export default function Home() {
 
         <div className="max-w-md mx-auto md:max-w-4xl px-4 py-6 md:py-8">
           {/* 결과 카드: OCR 텍스트 표시 영역 */}
-          <div className="card md:shadow-2xl ">
+          <div className="card md:shadow-2xl border border-gray-200">
             {/* 헤더 */}
-            <div className="mb-4 sm:mb-6 pb-4 sm:pb-6 ">
+            <div className="mb-4 sm:mb-6 pb-4 sm:pb-6 border-b-2 border-gray-200">
               <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 text-center mb-3">
                 읽어드림
               </h1>
@@ -152,14 +149,14 @@ export default function Home() {
             </p>
 
             {/* 결과 텍스트 박스: 스크롤 가능, 최대 높이 40vh */}
-            <div className="bg-yellow-100 rounded-3xl p-6 mb-6 max-h-[40vh] overflow-auto ">
+            <div className="bg-yellow-100 rounded-3xl p-6 mb-6 max-h-[40vh] overflow-auto border-2 border-yellow-200">
               <p className="text-xl leading-relaxed ocr-text text-gray-900">
                 {result.text || "글씨를 찾을 수 없어요"}
               </p>
             </div>
 
             {/* 상세 정보: 단어 수, 정확도 표시 */}
-            <div className="bg-yellow-100 rounded-3xl p-5 mb-6 space-y-3 ">
+            <div className="bg-yellow-100 rounded-3xl p-5 mb-6 space-y-3 border-2 border-yellow-200">
               <div className="flex justify-between py-2">
                 <span className="text-gray-700 text-base font-medium">
                   글자 개수
@@ -184,7 +181,7 @@ export default function Home() {
               className={`w-full py-5 rounded-3xl font-bold text-lg mb-4 transition-all ${
                 isSpeaking
                   ? "bg-red-500 hover:bg-red-600 text-white"
-                  : "bg-yellow-100 hover:bg-yellow-200 text-gray-900 "
+                  : "bg-yellow-100 hover:bg-yellow-200 text-gray-900 border-2 border-yellow-200"
               }`}
             >
               {isSpeaking ? "⏹️ 소리 멈추기" : "🔊 소리로 읽어주기"}
@@ -242,37 +239,34 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-8">
-              <button
-                onClick={() => router.push("/")}
-                className="flex items-center gap-3 hover:opacity-80 transition-opacity"
-              >
-                <span className="text-3xl leading-none">📖</span>
-                <h1 className="text-2xl font-bold text-gray-900 leading-none">읽어드림</h1>
-              </button>
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">📖</span>
+                <h1 className="text-2xl font-bold text-gray-900">읽어드림</h1>
+              </div>
 
               {/* PC 메뉴 */}
               <nav className="flex items-center gap-6">
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="text-gray-700 hover:text-gray-900 font-medium transition-all"
+                  className="text-gray-700 hover:text-gray-900 font-medium transition-all flex items-center gap-2"
                 >
                   약봉투
                 </button>
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="text-gray-700 hover:text-gray-900 font-medium transition-all"
+                  className="text-gray-700 hover:text-gray-900 font-medium transition-all flex items-center gap-2"
                 >
                   일반문서
                 </button>
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="text-gray-700 hover:text-gray-900 font-medium transition-all"
+                  className="text-gray-700 hover:text-gray-900 font-medium transition-all flex items-center gap-2"
                 >
                   신문/책
                 </button>
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="text-gray-700 hover:text-gray-900 font-medium transition-all"
+                  className="text-gray-700 hover:text-gray-900 font-medium transition-all flex items-center gap-2"
                 >
                   사진촬영
                 </button>
@@ -294,13 +288,10 @@ export default function Home() {
       <header className="md:hidden bg-yellow-100 shadow-md sticky top-0 z-50">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
-            <button
-              onClick={() => router.push("/")}
-              className="flex items-center gap-3 hover:opacity-80 transition-opacity"
-            >
-              <span className="text-3xl leading-none">📖</span>
-              <h1 className="text-2xl font-bold text-gray-900 leading-none">읽어드림</h1>
-            </button>
+            <div className="flex items-center gap-3">
+              <span className="text-3xl">📖</span>
+              <h1 className="text-2xl font-bold text-gray-900">읽어드림</h1>
+            </div>
             <button
               onClick={() => router.push("/history")}
               className="bg-white hover:bg-gray-50 text-gray-900 font-bold px-4 py-2 rounded-xl transition-all flex items-center gap-2 shadow-md"
@@ -315,7 +306,7 @@ export default function Home() {
       <div className="max-w-md mx-auto md:max-w-7xl px-4 py-6 md:py-12">
         {/* 데스크톱: 좌우 분할 레이아웃 / 모바일: 세로 레이아웃 */}
         <div className="md:grid md:grid-cols-2 md:gap-12 md:items-start">
-          {/* 왼쪽: 히어로 섹션 (데스크톱만) */}
+          {/* 왼쪽: 히어로 섹션 (데스크톱) */}
           <div className="hidden md:block">
             <div className="sticky top-24">
               <h2 className="text-5xl font-bold text-gray-900 mb-6 leading-tight">
@@ -352,9 +343,9 @@ export default function Home() {
           </div>
 
           {/* 오른쪽: 촬영 카드 */}
-          <div className="card md:shadow-2xl ">
+          <div className="card md:shadow-2xl border border-gray-200">
             {/* 데스크톱 헤더 */}
-            <div className="hidden md:block mb-6 pb-6 ">
+            <div className="hidden md:block mb-6 pb-6 border-b-2 border-gray-200">
               <h2 className="text-3xl font-bold text-gray-900 text-center mb-2">
                 시작하기
               </h2>
@@ -378,7 +369,7 @@ export default function Home() {
               <>
                 {/* 에러 메시지 표시 영역 */}
                 {error && (
-                  <div className="mb-4 bg-red-50 border-l-4 border-red-400 p-4 rounded">
+                  <div className="mb-4 bg-red-50 border-l-4 border-red-500 p-4 rounded">
                     <p className="text-red-800">{error}</p>
                   </div>
                 )}
@@ -388,7 +379,7 @@ export default function Home() {
                   {/* 약봉투 버튼 */}
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="aspect-square bg-yellow-100 hover:bg-yellow-200 rounded-2xl sm:rounded-3xl p-2 sm:p-4 transition-all shadow-md hover:shadow-lg "
+                    className="aspect-square bg-yellow-100 hover:bg-yellow-200 rounded-2xl sm:rounded-3xl p-2 sm:p-4 transition-all shadow-md hover:shadow-lg border border-gray-200"
                   >
                     <div className="flex flex-col items-center justify-center h-full gap-1 sm:gap-2">
                       <Pill className="w-10 h-10 sm:w-14 sm:h-14 text-gray-900" />
@@ -406,7 +397,7 @@ export default function Home() {
                   {/* 일반 문서 버튼 */}
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="aspect-square bg-yellow-100 hover:bg-yellow-200 rounded-2xl sm:rounded-3xl p-2 sm:p-4 transition-all shadow-md hover:shadow-lg "
+                    className="aspect-square bg-yellow-100 hover:bg-yellow-200 rounded-2xl sm:rounded-3xl p-2 sm:p-4 transition-all shadow-md hover:shadow-lg border border-gray-200"
                   >
                     <div className="flex flex-col items-center justify-center h-full gap-1 sm:gap-2">
                       <FileText className="w-10 h-10 sm:w-14 sm:h-14 text-gray-900" />
@@ -424,7 +415,7 @@ export default function Home() {
                   {/* 신문/책 버튼 */}
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="aspect-square bg-yellow-100 hover:bg-yellow-200 rounded-2xl sm:rounded-3xl p-2 sm:p-4 transition-all shadow-md hover:shadow-lg "
+                    className="aspect-square bg-yellow-100 hover:bg-yellow-200 rounded-2xl sm:rounded-3xl p-2 sm:p-4 transition-all shadow-md hover:shadow-lg border border-gray-200"
                   >
                     <div className="flex flex-col items-center justify-center h-full gap-1 sm:gap-2">
                       <Newspaper className="w-10 h-10 sm:w-14 sm:h-14 text-gray-900" />
@@ -442,7 +433,7 @@ export default function Home() {
                   {/* 사진 촬영 버튼 */}
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="aspect-square bg-yellow-100 hover:bg-yellow-200 rounded-2xl sm:rounded-3xl p-2 sm:p-4 transition-all shadow-md hover:shadow-lg "
+                    className="aspect-square bg-yellow-100 hover:bg-yellow-200 rounded-2xl sm:rounded-3xl p-2 sm:p-4 transition-all shadow-md hover:shadow-lg border border-gray-200"
                   >
                     <div className="flex flex-col items-center justify-center h-full gap-1 sm:gap-2">
                       <Camera className="w-10 h-10 sm:w-14 sm:h-14 text-gray-900" />
@@ -458,10 +449,10 @@ export default function Home() {
                   </button>
                 </div>
 
-                {/* 지난 기록 보기 버튼 (모바일만) */}
+                {/* 지난 기록 보기 버튼 (모바일) */}
                 <button
                   onClick={() => router.push("/history")}
-                  className="w-full bg-gray-100 hover:bg-gray-200 rounded-2xl sm:rounded-3xl p-3 sm:p-4 transition-all md:hidden "
+                  className="w-full bg-gray-100 hover:bg-gray-200 rounded-2xl sm:rounded-3xl p-3 sm:p-4 transition-all md:hidden border border-gray-200"
                 >
                   <div className="flex items-center justify-center gap-2 sm:gap-3">
                     <History className="w-6 h-6 sm:w-7 sm:h-7 text-gray-700" />
