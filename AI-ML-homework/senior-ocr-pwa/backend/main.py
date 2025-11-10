@@ -27,7 +27,7 @@ app = FastAPI(
 # CORS 설정 (Next.js에서 접근 가능하도록)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001"],
+    allow_origins=["*"],  # 모든 출처 허용 (운영환경에서는 특정 도메인만 허용 권장)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
