@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 :root {
-  --color-bg-card: #fffbeb;
+  --color-bg-card: #ffffff;
   --color-bg-light: #fef3c7;
   --color-bg-lighter: #fde68a;
-  --color-border: #fcd34d;
-  --color-text-primary: #92400e;
-  --color-text-secondary: #b45309;
-  --color-text-dark: #78350f;
+  --color-border: #e5e7eb;
+  --color-text-primary: #000000;
+  --color-text-secondary: #374151;
+  --color-text-dark: #1f2937;
   --color-button: #fbbf24;
   --color-button-hover: #f59e0b;
 }
@@ -26,17 +26,17 @@ body {
   background: #ffffff;
 }
 
-/* 메인 카드 스타일 - CSS 변수 사용, 모바일 최적화 */
+/* 메인 카드 스타일 - 깔끔한 흰색 */
 .card {
   background-color: var(--color-bg-card);
   @apply rounded-3xl shadow-lg;
-  padding: 1.5rem; /* 24px - 모바일에서 적절한 패딩 */
+  padding: 1.5rem;
 }
 
 /* 태블릿 이상 화면 */
 @media (min-width: 640px) {
   .card {
-    padding: 2rem; /* 32px - 큰 화면에서는 더 넓은 패딩 */
+    padding: 2rem;
   }
 }
 
