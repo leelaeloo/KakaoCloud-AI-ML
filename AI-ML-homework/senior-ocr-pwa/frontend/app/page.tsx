@@ -149,14 +149,14 @@ export default function Home() {
             </p>
 
             {/* 결과 텍스트 박스: 스크롤 가능, 최대 높이 40vh */}
-            <div className="bg-yellow-100 rounded-3xl p-6 mb-6 max-h-[40vh] overflow-auto border-2 border-yellow-200">
+            <div className="bg-yellow-100 rounded-3xl p-6 mb-6 max-h-[40vh] overflow-auto">
               <p className="text-xl leading-relaxed ocr-text text-gray-900">
                 {result.text || "글씨를 찾을 수 없어요"}
               </p>
             </div>
 
             {/* 상세 정보: 단어 수, 정확도 표시 */}
-            <div className="bg-yellow-100 rounded-3xl p-5 mb-6 space-y-3 border-2 border-yellow-200">
+            <div className="bg-yellow-100 rounded-3xl p-5 mb-6 space-y-3">
               <div className="flex justify-between py-2">
                 <span className="text-gray-700 text-base font-medium">
                   글자 개수
@@ -181,7 +181,7 @@ export default function Home() {
               className={`w-full py-5 rounded-3xl font-bold text-lg mb-4 transition-all ${
                 isSpeaking
                   ? "bg-red-500 hover:bg-red-600 text-white"
-                  : "bg-yellow-100 hover:bg-yellow-200 text-gray-900 border-2 border-yellow-200"
+                  : "bg-yellow-400 hover:bg-yellow-500 text-gray-900"
               }`}
             >
               {isSpeaking ? "⏹️ 소리 멈추기" : "🔊 소리로 읽어주기"}
@@ -319,7 +319,7 @@ export default function Home() {
               <p className="text-xl text-gray-700 mb-8 leading-relaxed">
                 사진을 찍으면 글씨를 크게 보여드리고
                 <br />
-                소리로 읽어드립니다.
+                소리로 읽어드려요!
               </p>
               <div className="space-y-4 text-lg text-gray-600">
                 <div className="flex items-center gap-3">

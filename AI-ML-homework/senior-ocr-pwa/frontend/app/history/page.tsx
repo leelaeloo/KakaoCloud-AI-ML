@@ -210,7 +210,7 @@ export default function HistoryPage() {
                           className={`flex-1 py-3 rounded-3xl font-bold transition-all shadow-md ${
                             isSpeaking && speakingId === item.id
                               ? "bg-red-500 hover:bg-red-600 text-white"
-                              : "bg-yellow-100 hover:bg-yellow-200 text-gray-900 "
+                              : "bg-yellow-400 hover:bg-yellow-500 text-gray-900"
                           }`}
                         >
                           <Volume2 className="w-5 h-5 inline mr-2" />
