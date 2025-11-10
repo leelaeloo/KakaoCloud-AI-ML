@@ -6,7 +6,7 @@
 
 ## Privew
 
-<img src="./screenshots/main.png" width="700">
+<img src="./screenshots/main-11-10.png" width="500">
 
 ## 프로젝트 소개
 

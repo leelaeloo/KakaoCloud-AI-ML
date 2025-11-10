@@ -110,24 +110,27 @@ export default function HistoryPage() {
   };
 
   return (
-    <div className="min-h-screen p-4 sm:p-6">
-      <div className="max-w-md mx-auto pt-6">
+    <div className="min-h-screen p-2 sm:p-4">
+      <div className="max-w-md mx-auto pt-2 sm:pt-4">
         {/* 메인 카드 */}
         <div className="card">
           {/* 헤더 */}
-          <div className="mb-6 pb-6 border-b-2 border-yellow-200">
-            <div className="flex items-center">
+          <div className="mb-8 pb-6 border-b-2 border-amber-300">
+            <div className="flex items-center mb-4">
               <button
                 onClick={() => router.push("/")}
-                className="w-10 h-10 rounded-full bg-yellow-100 hover:bg-yellow-200 flex items-center justify-center transition-all"
+                className="w-12 h-12 rounded-full bg-amber-100 hover:bg-amber-200 flex items-center justify-center transition-all"
               >
-                <ArrowLeft className="w-6 h-6 text-amber-700" />
+                <ArrowLeft className="w-7 h-7 text-amber-800" />
               </button>
-              <h1 className="flex-1 text-3xl font-bold text-amber-800 text-center">
+              <h1 className="flex-1 text-4xl font-bold text-amber-900 text-center">
                 지난 기록
               </h1>
-              <div className="w-10" /> {/* 균형 맞추기 */}
+              <div className="w-12" /> {/* 균형 맞추기 */}
             </div>
+            <p className="text-lg text-amber-700 font-medium text-center">
+              이전에 읽은 내용들을 다시 볼 수 있어요
+            </p>
           </div>
 
           {/* 로딩 */}

@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Camera, Upload, History } from "lucide-react";
+import { Camera, FileText, Pill, Newspaper, History } from "lucide-react";
 import axios from "axios";
 
 // 자동으로 현재 호스트 사용 (모바일/PC 모두 동작)
@@ -83,20 +83,21 @@ export default function Home() {
   // 결과 화면 (OCR 완료 후)
   if (result) {
     return (
-      <div className="min-h-screen p-4 sm:p-6">
-        <div className="max-w-md mx-auto pt-6">
+      <div className="min-h-screen p-2 sm:p-4">
+        <div className="max-w-md mx-auto pt-2 sm:pt-4">
           {/* 결과 카드: OCR 텍스트 표시 영역 */}
           <div className="card">
             {/* 헤더 */}
-            <div className="mb-6 pb-6 border-b-2 border-yellow-200">
-              <h1 className="text-3xl font-bold text-amber-800 text-center">
+            <div className="mb-4 sm:mb-6 pb-4 sm:pb-6 border-b-2 border-amber-300">
+              <h1 className="text-3xl sm:text-4xl font-bold text-amber-900 text-center mb-3">
                 읽어드림
               </h1>
+              <p className="text-lg sm:text-xl text-amber-700 font-medium text-center">
+                ✅ 글씨를 찾았어요!
+              </p>
             </div>
 
-            <p className="text-lg text-amber-800 font-semibold mb-6 text-center leading-relaxed">
-              ✅ 글씨를 찾았어요!
-              <br />
+            <p className="text-base sm:text-lg text-amber-600 font-medium mb-4 sm:mb-6 text-center leading-relaxed">
               아래 내용을 확인해주세요
             </p>
 
@@ -187,18 +188,18 @@ export default function Home() {
 
   // 메인 화면 (OCR 촬영 대기)
   return (
-    <div className="min-h-screen p-4 sm:p-6">
-      <div className="max-w-md mx-auto pt-6">
+    <div className="min-h-screen p-2 sm:p-4">
+      <div className="max-w-md mx-auto pt-2 sm:pt-4">
         {/* 통합 메인 카드: 헤더 + 촬영 UI */}
         <div className="card">
           {/* 헤더 */}
-          <div className="mb-6 pb-6 border-b-2 border-yellow-200">
-            <h1 className="text-3xl font-bold text-amber-800 text-center leading-tight">
-              읽어드림
-              <p className="text-lg text-amber-800 font-semibold mb-6 text-center">
-                사진을 찍으면 글씨를 크게 보여드려요!
-              </p>
+          <div className="mb-4 sm:mb-6 pb-4 sm:pb-6 border-b-2 border-amber-300">
+            <h1 className="text-3xl sm:text-4xl font-bold text-amber-900 text-center mb-3">
+              📖 읽어드림 📖
             </h1>
+            <p className="text-base sm:text-lg text-amber-700 font-medium text-center whitespace-nowrap">
+              사진을 찍으면 글씨를 크게 보여드려요!
+            </p>
           </div>
 
           {isProcessing ? (
@@ -221,58 +222,77 @@ export default function Home() {
                 </div>
               )}
 
-              {/* 촬영 프레임: 클릭하여 카메라/갤러리 열기 */}
-              <div
-                className="bg-yellow-100 rounded-3xl p-12 mb-6 cursor-pointer hover:bg-yellow-200 transition-all"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <div className="text-center">
-                  <Camera className="w-20 h-20 mx-auto text-amber-700 mb-4" />
-                  <p className="text-2xl text-amber-900 font-bold mb-2">
-                    여기를 눌러주세요
-                  </p>
-                  <p className="text-base text-amber-800">
-                    사진을 찍거나 앨범에서 선택하세요
-                  </p>
-                </div>
-              </div>
-
-              {/* 하단 버튼들: 카메라, 갤러리 */}
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                {/* 카메라 버튼 */}
+              {/* 문서 타입 선택 버튼들: 2x2 그리드 */}
+              <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-3 sm:mb-4">
+                {/* 약봉투 버튼 */}
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="bg-yellow-100 hover:bg-yellow-200 rounded-3xl p-6 transition-all"
+                  className="aspect-square bg-yellow-100 hover:bg-yellow-200 rounded-2xl sm:rounded-3xl p-2 sm:p-4 transition-all"
                 >
-                  <div className="text-center">
-                    <Camera className="w-12 h-12 mx-auto text-amber-700 mb-3" />
-                    <p className="text-base font-bold text-amber-900">
-                      사진 촬영
-                    </p>
-                    <p className="text-xs text-amber-700 mt-1">
-                      문서를 카메라로 찍어요
-                    </p>
+                  <div className="flex flex-col items-center justify-center h-full gap-1 sm:gap-2">
+                    <Pill className="w-10 h-10 sm:w-14 sm:h-14 text-amber-700" />
+                    <div className="text-center">
+                      <p className="text-base sm:text-lg font-bold text-amber-900 leading-tight">
+                        약봉투
+                      </p>
+                      <p className="text-[10px] sm:text-xs text-amber-700 leading-tight whitespace-nowrap">
+                        약 설명서
+                      </p>
+                    </div>
                   </div>
                 </button>
 
-                {/* 갤러리 버튼 */}
+                {/* 일반 문서 버튼 */}
                 <button
-                  onClick={() => {
-                    if (fileInputRef.current) {
-                      fileInputRef.current.removeAttribute("capture");
-                      fileInputRef.current.click();
-                    }
-                  }}
-                  className="bg-yellow-100 hover:bg-yellow-200 rounded-3xl p-6 transition-all"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="aspect-square bg-yellow-100 hover:bg-yellow-200 rounded-2xl sm:rounded-3xl p-2 sm:p-4 transition-all"
                 >
-                  <div className="text-center">
-                    <Upload className="w-12 h-12 mx-auto text-amber-700 mb-3" />
-                    <p className="text-base font-bold text-amber-900">
-                      앨범에서 선택
-                    </p>
-                    <p className="text-xs text-amber-700 mt-1">
-                      저장된 사진을 불러와요
-                    </p>
+                  <div className="flex flex-col items-center justify-center h-full gap-1 sm:gap-2">
+                    <FileText className="w-10 h-10 sm:w-14 sm:h-14 text-amber-700" />
+                    <div className="text-center">
+                      <p className="text-base sm:text-lg font-bold text-amber-900 leading-tight">
+                        일반 문서
+                      </p>
+                      <p className="text-[10px] sm:text-xs text-amber-700 leading-tight whitespace-nowrap">
+                        서류, 편지
+                      </p>
+                    </div>
+                  </div>
+                </button>
+
+                {/* 신문/책 버튼 */}
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="aspect-square bg-yellow-100 hover:bg-yellow-200 rounded-2xl sm:rounded-3xl p-2 sm:p-4 transition-all"
+                >
+                  <div className="flex flex-col items-center justify-center h-full gap-1 sm:gap-2">
+                    <Newspaper className="w-10 h-10 sm:w-14 sm:h-14 text-amber-700" />
+                    <div className="text-center">
+                      <p className="text-base sm:text-lg font-bold text-amber-900 leading-tight">
+                        신문/책
+                      </p>
+                      <p className="text-[10px] sm:text-xs text-amber-700 leading-tight whitespace-nowrap">
+                        기사, 책
+                      </p>
+                    </div>
+                  </div>
+                </button>
+
+                {/* 사진 촬영 버튼 */}
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="aspect-square bg-yellow-100 hover:bg-yellow-200 rounded-2xl sm:rounded-3xl p-2 sm:p-4 transition-all"
+                >
+                  <div className="flex flex-col items-center justify-center h-full gap-1 sm:gap-2">
+                    <Camera className="w-10 h-10 sm:w-14 sm:h-14 text-amber-700" />
+                    <div className="text-center">
+                      <p className="text-base sm:text-lg font-bold text-amber-900 leading-tight">
+                        사진 촬영
+                      </p>
+                      <p className="text-[10px] sm:text-xs text-amber-700 leading-tight whitespace-nowrap">
+                        직접 촬영
+                      </p>
+                    </div>
                   </div>
                 </button>
               </div>
@@ -280,11 +300,11 @@ export default function Home() {
               {/* 지난 기록 보기 버튼 */}
               <button
                 onClick={() => router.push("/history")}
-                className="w-full bg-yellow-100 hover:bg-yellow-200 rounded-3xl p-5 transition-all"
+                className="w-full bg-yellow-100 hover:bg-yellow-200 rounded-2xl sm:rounded-3xl p-3 sm:p-4 transition-all"
               >
-                <div className="flex items-center justify-center gap-3">
-                  <History className="w-7 h-7 text-amber-700" />
-                  <span className="text-lg font-bold text-amber-900">
+                <div className="flex items-center justify-center gap-2 sm:gap-3">
+                  <History className="w-6 h-6 sm:w-7 sm:h-7 text-amber-700" />
+                  <span className="text-base sm:text-lg font-bold text-amber-900">
                     지난 기록 보기
                   </span>
                 </div>
