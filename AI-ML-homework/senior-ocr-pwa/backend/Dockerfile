@@ -1,17 +1,12 @@
 FROM python:3.11-slim
 
 # Tesseract OCR 설치
-RUN apt-get update && apt-get install -y \
-    tesseract-ocr \
-    tesseract-ocr-kor \
-    tesseract-ocr-eng \
-    libglib2.0-0 \
-    libsm6 \
-    libxext6 \
-    libxrender-dev \
-    libgomp1 \
-    ffmpeg \
-    && rm -rf /var/lib/apt/lists/*
+ RUN apt-get update && apt-get install -y \
+      tesseract-ocr \
+      tesseract-ocr-kor \
+      tesseract-ocr-eng \
+      libglib2.0-0 \
+      && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 

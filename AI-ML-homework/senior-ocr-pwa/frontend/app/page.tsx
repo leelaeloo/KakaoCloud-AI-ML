@@ -5,11 +5,12 @@ import { useRouter } from "next/navigation";
 import { Camera, FileText, Pill, Newspaper, History } from "lucide-react";
 import axios from "axios";
 
-// 자동으로 현재 호스트 사용 (모바일/PC 모두 동작)
+// ✅ 환경별 안전한 API URL 설정
 const API_URL =
-  typeof window !== "undefined"
-    ? `http://${window.location.hostname}:8000`
-    : "http://localhost:8000";
+  process.env.NEXT_PUBLIC_API_URL ||
+  (typeof window !== "undefined"
+    ? `${window.location.origin}/api`
+    : "http://localhost:8000/api");
 
 export default function Home() {
   const router = useRouter();
@@ -19,6 +20,61 @@ export default function Home() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // ✅ 이미지 압축 함수 추가
+  const compressImage = (file: File): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
+
+          // 최대 크기 1920px로 제한
+          const maxSize = 1920;
+          if (width > height) {
+            if (width > maxSize) {
+              height = (height * maxSize) / width;
+              width = maxSize;
+            }
+          } else {
+            if (height > maxSize) {
+              width = (width * maxSize) / height;
+              height = maxSize;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const compressedFile = new File([blob], file.name, {
+                  type: "image/jpeg",
+                  lastModified: Date.now(),
+                });
+                resolve(compressedFile);
+              } else {
+                reject(new Error("이미지 압축 실패"));
+              }
+            },
+            "image/jpeg",
+            0.85 // 85% 품질
+          );
+        };
+        img.onerror = () => reject(new Error("이미지 로드 실패"));
+      };
+      reader.onerror = () => reject(new Error("파일 읽기 실패"));
+    });
+  };
+
   const handleImageUpload = async (file: File) => {
     if (!file) return;
 
@@ -27,20 +83,64 @@ export default function Home() {
     setResult(null);
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
+      console.log(
+        "📸 원본 파일 크기:",
+        (file.size / 1024 / 1024).toFixed(2),
+        "MB"
+      );
 
-      const response = await axios.post(`${API_URL}/api/ocr`, formData, {
+      // ✅ 이미지 압축 (2MB 이상일 경우)
+      let processedFile = file;
+      if (file.size > 2 * 1024 * 1024) {
+        console.log("🔄 이미지 압축 중...");
+        processedFile = await compressImage(file);
+        console.log(
+          "✅ 압축 후 크기:",
+          (processedFile.size / 1024 / 1024).toFixed(2),
+          "MB"
+        );
+      }
+
+      const formData = new FormData();
+      formData.append("file", processedFile);
+
+      console.log("📤 API 요청:", `${API_URL}/ocr`);
+
+      // ✅ HTTPS 대응 및 API_URL 기반 요청
+      const response = await axios.post(`${API_URL}/ocr`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        withCredentials: false,
+        timeout: 30000, // 30초 타임아웃
       });
+
+      console.log("✅ API 응답:", response.data);
 
       if (response.data.success) {
         setResult(response.data.data);
+      } else {
+        setError("OCR 결과를 불러오지 못했습니다.");
       }
     } catch (err: any) {
-      setError(err.response?.data?.detail || "처리 중 오류가 발생했습니다");
+      console.error("❌ OCR 요청 오류:", err);
+
+      let errorMessage = "처리 중 오류가 발생했습니다";
+
+      if (err.code === "ECONNABORTED") {
+        errorMessage = "⏱️ 요청 시간이 초과되었습니다. 다시 시도해주세요.";
+      } else if (err.response) {
+        // 서버 응답 오류
+        errorMessage =
+          err.response?.data?.detail || `⚠️ 서버 오류 (${err.response.status})`;
+      } else if (err.request) {
+        // 네트워크 오류
+        errorMessage = "📡 네트워크 연결을 확인해주세요.";
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+
+      setError(errorMessage);
     } finally {
       setIsProcessing(false);
     }
@@ -60,8 +160,10 @@ export default function Home() {
         speechSynthesis.cancel();
         setIsSpeaking(false);
       } else {
+        // ✅ 줄바꿈을 짧은 멈춤으로 변환하여 자연스럽게 읽기
+        const cleanedText = text.replace(/\n+/g, ". ");
         // 음성 시작
-        const utterance = new SpeechSynthesisUtterance(text);
+        const utterance = new SpeechSynthesisUtterance(cleanedText);
         utterance.lang = "ko-KR";
         utterance.rate = 0.8; // 천천히
         utterance.pitch = 1;
@@ -111,15 +213,23 @@ export default function Home() {
     return (
       <div className="min-h-screen bg-white">
         {/* 통합 헤더 (모바일/데스크톱) */}
-        <header className="bg-yellow-100 shadow-md sticky top-0 z-50 border-b-2 border-yellow-200">
+        <header className="bg-yellow-100 shadow-md sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  setResult(null);
+                  setError(null);
+                  setIsSpeaking(false);
+                  speechSynthesis.cancel();
+                }}
+                className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+              >
                 <span className="text-3xl md:text-4xl">📖</span>
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
                   읽어드림
                 </h1>
-              </div>
+              </button>
               <button
                 onClick={() => router.push("/history")}
                 className="bg-white hover:bg-gray-50 text-gray-900 font-bold px-4 py-2 md:px-6 md:py-3 rounded-xl transition-all flex items-center gap-2 shadow-md"
@@ -150,7 +260,7 @@ export default function Home() {
 
             {/* 결과 텍스트 박스: 스크롤 가능, 최대 높이 40vh */}
             <div className="bg-yellow-100 rounded-3xl p-6 mb-6 max-h-[40vh] overflow-auto">
-              <p className="text-xl leading-relaxed ocr-text text-gray-900">
+              <p className="text-xl leading-relaxed ocr-text text-gray-900 whitespace-pre-wrap">
                 {result.text || "글씨를 찾을 수 없어요"}
               </p>
             </div>
@@ -303,7 +413,7 @@ export default function Home() {
       </header>
 
       {/* 메인 컨텐츠 영역 */}
-      <div className="max-w-md mx-auto md:max-w-7xl px-4 py-6 md:py-12">
+      <div className="max-w-md mx-auto md:max-w-7xl px-4 py-6 md:py-6">
         {/* 데스크톱: 좌우 분할 레이아웃 / 모바일: 세로 레이아웃 */}
         <div className="md:grid md:grid-cols-2 md:gap-12 md:items-start">
           {/* 왼쪽: 히어로 섹션 (데스크톱) */}
@@ -371,6 +481,12 @@ export default function Home() {
                 {error && (
                   <div className="mb-4 bg-red-50 border-l-4 border-red-500 p-4 rounded">
                     <p className="text-red-800">{error}</p>
+                    <button
+                      onClick={() => setError(null)}
+                      className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
+                    >
+                      닫기
+                    </button>
                   </div>
                 )}
 

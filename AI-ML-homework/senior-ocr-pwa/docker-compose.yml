@@ -1,21 +1,21 @@
-version: '3.8'
+version: "3.9"
 
 services:
   # Backend (FastAPI)
   backend:
     build: ./backend
     container_name: ocr-backend
+    restart: unless-stopped
     ports:
       - "8000:8000"
     volumes:
       - ./backend:/app
-      - ./data/uploads:/app/uploads
-      - ./data/results:/app/results
+      - ./backend/uploads:/app/uploads
+      - ./backend/results:/app/results
     environment:
-      - DEBUG=true
+      - DEBUG=false
       - UPLOAD_DIR=/app/uploads
       - RESULTS_DIR=/app/results
-    restart: unless-stopped
     networks:
       - ocr-network
 
@@ -23,6 +23,7 @@ services:
   frontend:
     build: ./frontend
     container_name: ocr-frontend
+    restart: unless-stopped
     ports:
       - "3000:3000"
     volumes:
@@ -30,16 +31,28 @@ services:
       - /app/node_modules
       - /app/.next
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_API_URL=https://goodboy.kakaolab.cloud/api
     depends_on:
       - backend
-    restart: unless-stopped
     networks:
       - ocr-network
 
-volumes:
-  uploads:
-  results:
+  # Nginx
+  nginx:
+    image: nginx:latest
+    container_name: ocr-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - ocr-network
 
 networks:
   ocr-network:
