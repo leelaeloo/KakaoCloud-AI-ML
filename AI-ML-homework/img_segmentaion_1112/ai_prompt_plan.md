@@ -65,7 +65,7 @@ AI가 이미지 속 해당 대상을 자동으로 탐지하고 정밀하게 세�
 
 ```pgsql
 
-📦 Prompt-SAM Fusion System
+⏹️ Prompt-SAM Fusion System
 │
 ├─ ① Text Prompt Input Layer
 │    └─ 텍스트 입력 및 자연어 전처리
