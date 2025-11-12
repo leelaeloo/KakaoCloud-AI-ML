@@ -34,6 +34,8 @@
 
 - 어르신들을 위한 문서 읽어주기 앱입니다.
 
-### 자세하게 보기 ➡️ [senior-ocr-pwa](AI-ML-homework/senior-ocr-pwa/README.md)
+### [img_segmentaion_1112](AI-ML-homework/img_segmentaion_1112)
+
+- 이미지 세그먼테이션 아이디어 기획서입니다.
 
 ---
