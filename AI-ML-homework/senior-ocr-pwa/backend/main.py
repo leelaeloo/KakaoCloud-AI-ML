@@ -19,15 +19,13 @@ from models import OCRHistory
 
 # FastAPI 앱 생성
 app = FastAPI(
-    title="시니어 친화 OCR API",
-    description="간단하고 쉬운 OCR 서비스",
-    version="1.0.0"
+    title="시니어 친화 OCR API", description="간단하고 쉬운 OCR 서비스", version="1.0.0"
 )
 
-# CORS 설정 (Next.js에서 접근 가능하도록)
+# CORS 설정
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 모든 출처 허용 (운영환경에서는 특정 도메인만 허용 권장)
+    allow_origins=["*"],  # 모든 출처 허용
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -40,6 +38,7 @@ async def startup_event():
     """앱 시작 시 데이터베이스 테이블 생성"""
     await init_db()
     print("✅ 데이터베이스 초기화 완료")
+
 
 # 디렉토리 설정
 UPLOAD_DIR = os.getenv("UPLOAD_DIR", "./uploads")
@@ -63,9 +62,7 @@ def preprocess_image(image_bytes: bytes) -> np.ndarray:
 
     # 이진화 (흑백으로)
     binary = cv2.adaptiveThreshold(
-        denoised, 255,
-        cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-        cv2.THRESH_BINARY, 11, 2
+        denoised, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2
     )
 
     return binary
@@ -80,36 +77,29 @@ def extract_text(image_bytes: bytes, lang: str = "kor+eng") -> Dict:
 
         # OCR 실행
         text = pytesseract.image_to_string(
-            processed_img,
-            lang=lang,
-            config='--oem 3 --psm 6'
+            processed_img, lang=lang, config="--oem 3 --psm 6"
         )
 
         # 상세 정보 추출
         data = pytesseract.image_to_data(
-            processed_img,
-            lang=lang,
-            output_type=pytesseract.Output.DICT
+            processed_img, lang=lang, output_type=pytesseract.Output.DICT
         )
 
         # 신뢰도 계산
-        confidences = [float(c) for c in data['conf'] if c != '-1']
+        confidences = [float(c) for c in data["conf"] if c != "-1"]
         avg_confidence = sum(confidences) / len(confidences) if confidences else 0
 
         # 단어 정보
         words = []
-        for i, word in enumerate(data['text']):
+        for i, word in enumerate(data["text"]):
             if word.strip():
-                words.append({
-                    'text': word,
-                    'confidence': float(data['conf'][i])
-                })
+                words.append({"text": word, "confidence": float(data["conf"][i])})
 
         return {
-            'text': text.strip(),
-            'confidence': round(avg_confidence, 2),
-            'word_count': len(words),
-            'words': words
+            "text": text.strip(),
+            "confidence": round(avg_confidence, 2),
+            "word_count": len(words),
+            "words": words,
         }
 
     except Exception as e:
@@ -118,13 +108,14 @@ def extract_text(image_bytes: bytes, lang: str = "kor+eng") -> Dict:
 
 # === API 엔드포인트 ===
 
+
 @app.get("/")
 async def root():
     """헬스 체크"""
     return {
         "status": "ok",
         "message": "시니어 친화 OCR API 실행 중",
-        "version": "1.0.0"
+        "version": "1.0.0",
     }
 
 
@@ -132,7 +123,7 @@ async def root():
 async def process_ocr(
     file: UploadFile = File(...),
     language: str = "kor+eng",
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     """
     OCR 처리 API
@@ -143,10 +134,9 @@ async def process_ocr(
     """
     try:
         # 파일 타입 검증
-        if not file.content_type.startswith('image/'):
+        if not file.content_type.startswith("image/"):
             raise HTTPException(
-                status_code=400,
-                detail="이미지 파일만 업로드 가능합니다"
+                status_code=400, detail="이미지 파일만 업로드 가능합니다"
             )
 
         # 파일 읽기
@@ -155,8 +145,7 @@ async def process_ocr(
         # 파일 크기 체크 (10MB)
         if len(image_bytes) > 10 * 1024 * 1024:
             raise HTTPException(
-                status_code=400,
-                detail="파일 크기는 10MB 이하여야 합니다"
+                status_code=400, detail="파일 크기는 10MB 이하여야 합니다"
             )
 
         # 고유 ID 생성
@@ -172,11 +161,11 @@ async def process_ocr(
 
         # 결과 데이터 구성
         result_data = {
-            'task_id': task_id,
-            'timestamp': datetime.now().isoformat(),
-            'filename': file.filename,
-            'language': language,
-            **result
+            "task_id": task_id,
+            "timestamp": datetime.now().isoformat(),
+            "filename": file.filename,
+            "language": language,
+            **result,
         }
 
         # JSON 파일로도 저장 (백업용)
@@ -184,31 +173,26 @@ async def process_ocr(
         with open(result_path, "w", encoding="utf-8") as f:
             json.dump(result_data, f, ensure_ascii=False, indent=2)
 
-        # ✨ DB에 저장
+        # DB에 저장
         ocr_record = OCRHistory(
             task_id=task_id,
-            text=result['text'],
-            word_count=result['word_count'],
-            confidence=result['confidence'],
-            created_at=datetime.utcnow()
+            text=result["text"],
+            word_count=result["word_count"],
+            confidence=result["confidence"],
+            created_at=datetime.utcnow(),
         )
         db.add(ocr_record)
         await db.commit()
         await db.refresh(ocr_record)
 
-        return JSONResponse(content={
-            'success': True,
-            'task_id': task_id,
-            'data': result_data
-        })
+        return JSONResponse(
+            content={"success": True, "task_id": task_id, "data": result_data}
+        )
 
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"서버 오류: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"서버 오류: {str(e)}")
 
 
 @app.get("/api/result/{task_id}")
@@ -218,26 +202,17 @@ async def get_result(task_id: str):
         result_path = os.path.join(RESULTS_DIR, f"{task_id}.json")
 
         if not os.path.exists(result_path):
-            raise HTTPException(
-                status_code=404,
-                detail="결과를 찾을 수 없습니다"
-            )
+            raise HTTPException(status_code=404, detail="결과를 찾을 수 없습니다")
 
         with open(result_path, "r", encoding="utf-8") as f:
             result = json.load(f)
 
-        return JSONResponse(content={
-            'success': True,
-            'data': result
-        })
+        return JSONResponse(content={"success": True, "data": result})
 
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"서버 오류: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"서버 오류: {str(e)}")
 
 
 @app.get("/api/history")
@@ -252,27 +227,28 @@ async def get_history(limit: int = 10, db: AsyncSession = Depends(get_db)):
         # 응답 데이터 구성
         history = []
         for record in records:
-            history.append({
-                'id': record.id,
-                'task_id': record.task_id,
-                'text_preview': record.text[:100] + '...' if len(record.text) > 100 else record.text,
-                'text': record.text,  # 전체 텍스트도 포함
-                'confidence': record.confidence,
-                'word_count': record.word_count,
-                'created_at': record.created_at.isoformat()
-            })
+            history.append(
+                {
+                    "id": record.id,
+                    "task_id": record.task_id,
+                    "text_preview": (
+                        record.text[:100] + "..."
+                        if len(record.text) > 100
+                        else record.text
+                    ),
+                    "text": record.text,  # 전체 텍스트도 포함
+                    "confidence": record.confidence,
+                    "word_count": record.word_count,
+                    "created_at": record.created_at.isoformat(),
+                }
+            )
 
-        return JSONResponse(content={
-            'success': True,
-            'count': len(history),
-            'data': history
-        })
+        return JSONResponse(
+            content={"success": True, "count": len(history), "data": history}
+        )
 
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"서버 오류: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"서버 오류: {str(e)}")
 
 
 @app.delete("/api/history/{record_id}")
@@ -285,27 +261,20 @@ async def delete_history(record_id: int, db: AsyncSession = Depends(get_db)):
         record = result.scalar_one_or_none()
 
         if not record:
-            raise HTTPException(
-                status_code=404,
-                detail="기록을 찾을 수 없습니다"
-            )
+            raise HTTPException(status_code=404, detail="기록을 찾을 수 없습니다")
 
         # 삭제
         await db.delete(record)
         await db.commit()
 
-        return JSONResponse(content={
-            'success': True,
-            'message': '기록이 삭제되었습니다'
-        })
+        return JSONResponse(
+            content={"success": True, "message": "기록이 삭제되었습니다"}
+        )
 
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"서버 오류: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"서버 오류: {str(e)}")
 
 
 @app.get("/api/history/{record_id}")
@@ -318,32 +287,29 @@ async def get_history_detail(record_id: int, db: AsyncSession = Depends(get_db))
         record = result.scalar_one_or_none()
 
         if not record:
-            raise HTTPException(
-                status_code=404,
-                detail="기록을 찾을 수 없습니다"
-            )
+            raise HTTPException(status_code=404, detail="기록을 찾을 수 없습니다")
 
-        return JSONResponse(content={
-            'success': True,
-            'data': {
-                'id': record.id,
-                'task_id': record.task_id,
-                'text': record.text,
-                'confidence': record.confidence,
-                'word_count': record.word_count,
-                'created_at': record.created_at.isoformat()
+        return JSONResponse(
+            content={
+                "success": True,
+                "data": {
+                    "id": record.id,
+                    "task_id": record.task_id,
+                    "text": record.text,
+                    "confidence": record.confidence,
+                    "word_count": record.word_count,
+                    "created_at": record.created_at.isoformat(),
+                },
             }
-        })
+        )
 
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"서버 오류: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"서버 오류: {str(e)}")
 
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)
